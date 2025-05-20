@@ -50,4 +50,30 @@ public static class EventFactory
             }).ToList()
         };
     }
+
+    public static EventEntity EntityFromModel(EventModel model)
+    {
+        return new EventEntity
+        {
+            Id = model.Id,
+            EventName = model.EventName,
+            Description = model.Description,
+            Venue = model.Venue,
+            StreetAddress = model.StreetAddress,
+            PostalCode = model.PostalCode,
+            City = model.City,
+            Country = model.Country,
+            Start = model.Start,
+            End = model.End,
+            Price = model.Price,
+            Currency = model.Currency,
+            TotalSeats = model.TotalSeats,
+            SeatsLeft = model.SeatsLeft,
+            EventsCategories = model.Categories.Select(x => new EventsCategoriesEntity
+            {
+                EventId = model.Id,
+                CategoryId = x.Id
+            }).ToList()
+        };
+    }
 }

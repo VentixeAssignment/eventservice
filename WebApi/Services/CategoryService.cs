@@ -6,10 +6,10 @@ using WebApi.Repositories;
 
 namespace WebApi.Services;
 
-public class CategoryService(CategoryRepository repository, ILogger<EventModel> logger) : ICategoryService
+public class CategoryService(CategoryRepository repository, ILogger<CategoryModel> logger) : ICategoryService
 {
     private readonly CategoryRepository _repository = repository;
-    private readonly ILogger<EventModel> _logger = logger;
+    private readonly ILogger<CategoryModel> _logger = logger;
 
 
     public async Task<Result<CategoryModel>> CreateAsync(CategoryRegForm dto)
@@ -49,7 +49,7 @@ public class CategoryService(CategoryRepository repository, ILogger<EventModel> 
         {
             await _repository.RollbackTransactionAsync();
             _logger.LogError(ex.Message, "Something went wrong creating model of type {ModelType}", typeof(CategoryModel).Name);
-            return new Result<CategoryModel> { Success = false, StatusCode = 500, ErrorMessage = $"Something went wrong creating entity.\n{ex.Message}" };
+            return new Result<CategoryModel> { Success = false, StatusCode = 500, ErrorMessage = $"Something went wrong creating category.\n{ex.Message}" };
         }
     }
 
