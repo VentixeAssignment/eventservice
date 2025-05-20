@@ -10,4 +10,5 @@ public interface IEventService
     Task<Result<EventModel>> GetOneAsync(string id);
     Task<Result<EventModel>> UpdateAsync(EventModel model);
     Task<Result<EventModel>> DeleteAsync(string id);
+    Task<Result<EventModel>> UpdateSeatsLeftAsync(string eventId, int seats);
 }

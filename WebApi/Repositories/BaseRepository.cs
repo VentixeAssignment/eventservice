@@ -3,19 +3,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Identity.Client;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using WebApi.Data;
+using WebApi.Entities;
 using WebApi.Models;
 
 namespace WebApi.Repositories;
 
 public class BaseRepository<TEntity, TModel> 
-    where TEntity : class 
+    where TEntity : class
     where TModel : class
 {
     protected readonly DataContext _context;
     protected readonly DbSet<TEntity> _table;
     private IDbContextTransaction _transaction = null!;
-    private readonly ILogger<BaseRepository<TEntity, TModel>> _logger;
+    protected readonly ILogger<BaseRepository<TEntity, TModel>> _logger;
 
     public BaseRepository(DataContext context, ILogger<BaseRepository<TEntity, TModel>> logger)
     {
@@ -34,7 +36,6 @@ public class BaseRepository<TEntity, TModel>
 
         try
         {
-            await BeginTransactionAsync();
             var result = await _context.AddAsync(model);
 
             return result != null

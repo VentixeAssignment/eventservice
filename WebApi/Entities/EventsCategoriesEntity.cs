@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApi.Entities;
 
-public class EventsCategoriesEntity
+public class EventsCategoriesEntity 
 {
     [Required]
     public string CategoryId { get; set; } = null!;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApi.Entities;
 
-public class CategoryEntity
+public class CategoryEntity 
 {
     [Required]
     public string Id { get; set; } = Guid.NewGuid().ToString();
