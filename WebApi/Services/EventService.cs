@@ -11,6 +11,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
     private readonly EventRepository _repository = repository;
     private readonly ILogger<EventModel> _logger = logger;
 
+
     public async Task<Result<EventModel>> CreateAsync(EventRegForm dto)
     {
         if (dto == null)
@@ -28,7 +29,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
             if (!newEntityResult.Success || newEntityResult.Data == null)
             {
                 _logger.LogWarning("Failed to create event in repository: {Error}", newEntityResult.ErrorMessage);
-                return new Result<EventModel> { Success = false, StatusCode = begin.StatusCode, ErrorMessage = begin.ErrorMessage };
+                return new Result<EventModel> { Success = false, StatusCode = newEntityResult.StatusCode, ErrorMessage = newEntityResult.ErrorMessage };
             }
 
             await _repository.SaveChangesAsync();
@@ -42,7 +43,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
         catch (Exception ex)
         {
             await _repository.RollbackTransactionAsync();
-            _logger.LogError(ex.Message, "Something went wrong creating event of type {ModelType}", typeof(CategoryModel).Name);
+            _logger.LogError(ex.Message, "Something went wrong creating event of type {ModelType}", typeof(EventModel).Name);
             return new Result<EventModel> { Success = false, StatusCode = 500, ErrorMessage = $"Something went wrong creating event.\n{ex.Message}" };
         }
     }
@@ -194,7 +195,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
         catch (Exception ex)
         {
             await _repository.RollbackTransactionAsync();
-            _logger.LogError(ex.Message, "\nFailed to delete model of type {ModelType}", typeof(CategoryModel).Name);
+            _logger.LogError(ex.Message, "\nFailed to delete model of type {ModelType}", typeof(EventModel).Name);
             return new Result<EventModel> { Success = false, StatusCode = 500, ErrorMessage = $"Something went wrong deleting event.\n{ex.Message}" };
         }
     }

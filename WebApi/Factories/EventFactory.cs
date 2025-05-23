@@ -19,7 +19,7 @@ public static class EventFactory
             Country = dto.Country,
             Start = dto.Start,
             End = dto.End,
-            Price = dto.Price,
+            PricePerSeat = dto.Price,
             Currency = dto.Currency,
             TotalSeats = dto.TotalSeats
         };
@@ -39,7 +39,7 @@ public static class EventFactory
             Country = entity.Country,
             Start = entity.Start,
             End = entity.End,
-            Price = entity.Price,
+            Price = entity.PricePerSeat,
             Currency = entity.Currency,
             TotalSeats = entity.TotalSeats,
             SeatsLeft = entity.SeatsLeft ?? 0,
@@ -65,7 +65,7 @@ public static class EventFactory
             Country = model.Country,
             Start = model.Start,
             End = model.End,
-            Price = model.Price,
+            PricePerSeat = model.Price,
             Currency = model.Currency,
             TotalSeats = model.TotalSeats,
             SeatsLeft = model.SeatsLeft,

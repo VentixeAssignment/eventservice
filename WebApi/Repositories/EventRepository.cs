@@ -20,7 +20,7 @@ public class EventRepository(DataContext context, ILogger<BaseRepository<EventEn
         {
             entity.SeatsLeft -= seats;
 
-            return new Result<EventEntity> { Success = true, StatusCode = 200, Data = entity };
+            return new Result<EventEntity> { Success = true, StatusCode = 200 };
         }
         catch (Exception ex)
         {

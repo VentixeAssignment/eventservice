@@ -46,7 +46,7 @@ namespace WebApi.Entities
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal Price { get; set; }
+        public decimal PricePerSeat { get; set; }
 
         [Required]
         [DataType(DataType.Currency)]

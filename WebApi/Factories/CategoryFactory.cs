@@ -31,7 +31,7 @@ public static class CategoryFactory
                 City = x.Event.City,
                 Country = x.Event.Country,
                 Start = x.Event.Start,
-                Price = x.Event.Price,
+                Price = x.Event.PricePerSeat,
                 Currency = x.Event.Currency,
                 SeatsLeft = x.Event.SeatsLeft ?? 0
             }).ToList()
