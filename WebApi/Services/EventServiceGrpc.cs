@@ -73,7 +73,6 @@ public class EventServiceGrpc(EventRepository repository, ILogger<EventInformati
 
         try
         {
-            await _repository.BeginTransactionAsync();
 
             var entity = await _repository.GetOneAsync(x => x.Id == request.Id);
             if (!entity.Success || entity.Data == null)
@@ -85,15 +84,28 @@ public class EventServiceGrpc(EventRepository repository, ILogger<EventInformati
                     Message = $"No entity found with id {request.Id}"
                 };
             }
+            
+            if (request.SeatsOrdered > entity.Data.SeatsLeft)
+            {
+                _loggerSeats.LogWarning($"Seats ordered exceeds available seats for entity with id {request.Id}");
+                return new SeatsReply
+                {
+                    Success = false,
+                    Message = $"Seats ordered exceeds available seats for entity with id {request.Id}"
+                };
+            }
+
+            await _repository.BeginTransactionAsync();
 
             var updated = _repository.UpdateSeatsLeft(entity.Data, request.SeatsOrdered);
             if (!updated.Success)
             {
+                await _repository.RollbackTransactionAsync();
                 _loggerSeats.LogWarning($"Failed to update seats left for entity with id {request.Id}.");
                 return new SeatsReply
                 {
                     Success = false,
-                    Message = $"Failed to update seats for entity with id {request.Id}."
+                    Message = $"Failed to update seats left for entity with id {request.Id}."
                 };
             }
 
@@ -109,7 +121,7 @@ public class EventServiceGrpc(EventRepository repository, ILogger<EventInformati
         catch (Exception ex)
         {
             await _repository.RollbackTransactionAsync();
-            _loggerSeats.LogError(ex.Message, $"\nFailed to update seats left for entity with id {request.Id}");
+            _loggerSeats.LogError($"Failed to update seats left for entity with id {request.Id}\n{ex}\n{ex.Message}");
             return new SeatsReply
             {
                 Success = false,
