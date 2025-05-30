@@ -16,6 +16,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
     private readonly DataContext _context = context;
 
 
+
     public async Task<Result<EventModel>> CreateAsync(EventRegForm dto)
     {
         if (dto == null)
@@ -65,15 +66,15 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
 
     public async Task<Result<EventModel>> GetAllAsync()
     {
-        var result = await _repository.GetAllAsync();
+        var result = await _repository.GetAllWithCategoriesAsync();
 
         if (!result.Success || result.DataList == null)
             return new Result<EventModel> { Success = false, StatusCode = result.StatusCode, ErrorMessage = result.ErrorMessage };
 
-        var categories = result.DataList.Select(x => EventFactory.ModelFromEntity(x)).ToList();
+        var events = result.DataList.Select(x => EventFactory.ModelFromEntity(x)).ToList();
 
-        return categories.Any()
-            ? new Result<EventModel> { Success = true, DataList = categories }
+        return events.Any()
+            ? new Result<EventModel> { Success = true, DataList = events }
             : new Result<EventModel> { Success = false, StatusCode = 404, ErrorMessage = "No events was found." };
     }
 

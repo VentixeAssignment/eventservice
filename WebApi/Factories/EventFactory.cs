@@ -22,7 +22,8 @@ public static class EventFactory
             End = dto.End,
             PricePerSeat = dto.Price,
             Currency = dto.Currency,
-            TotalSeats = dto.TotalSeats
+            TotalSeats = dto.TotalSeats,
+            SeatsLeft = dto.TotalSeats
         };
     }
 
@@ -48,7 +49,7 @@ public static class EventFactory
             Categories = entity.EventsCategories.Select(x => new CategoryModel
             {
                 Id = x.CategoryId,
-                //CategoryName = x.Category.CategoryName ?? ""
+                CategoryName = x.Category?.CategoryName ?? ""
             }).ToList()
         };
     }

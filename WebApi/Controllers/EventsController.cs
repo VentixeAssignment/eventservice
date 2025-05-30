@@ -11,6 +11,21 @@ namespace WebApi.Controllers
     {
         private readonly IEventService _eventService = eventService;
 
+
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> GetEventsAsync()
+        {
+            var events = await _eventService.GetAllAsync();
+            if (events == null || events.DataList == null)
+                return BadRequest("No events returned.");
+
+                return events!.DataList!.Any()
+                    ? Ok(events.DataList)
+                    : NotFound("No events fount.");
+        }
+
+
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateEventAsync(EventRegForm form)

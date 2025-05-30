@@ -29,4 +29,16 @@ public class EventRepository(DataContext context, ILogger<BaseRepository<EventEn
                 ErrorMessage = $"Something went wrong updating column SeatsLeft for event with id: {entity.Id}" };
         }
     }
+
+    public async Task<Result<EventEntity>> GetAllWithCategoriesAsync()
+    {
+        var detailedEvent = await _table
+            .Include(e => e.EventsCategories)
+                .ThenInclude(ec => ec.Category)
+            .ToListAsync();
+
+        return detailedEvent.Count() != 0
+            ? new Result<EventEntity> { Success = true, DataList = detailedEvent }
+            : new Result<EventEntity> { Success = false, StatusCode = 404, ErrorMessage = "No events were found." };
+    }
 }
