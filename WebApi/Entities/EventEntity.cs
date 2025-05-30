@@ -20,21 +20,21 @@ namespace WebApi.Entities
         [Column(TypeName = "nvarchar(30)")]
         public string Venue { get; set; } = null!;
 
-        [Required]
-        [Column(TypeName = "nvarchar(50)")]
-        public string StreetAddress { get; set; } = null!;
 
-        [Required]
+        [Column(TypeName = "nvarchar(50)")]
+        public string? StreetAddress { get; set; } 
+
+
         [Column(TypeName = "nvarchar(10)")]
-        public string PostalCode { get; set; } = null!;
+        public string? PostalCode { get; set; }
 
         [Required]
         [Column(TypeName = "nvarchar(20)")]
         public string City { get; set; } = null!;
 
-        [Required]
+
         [Column(TypeName = "nvarchar(20)")]
-        public string Country { get; set; } = null!;
+        public string? Country { get; set; } 
 
         [Required]
         [DataType(DataType.DateTime)]

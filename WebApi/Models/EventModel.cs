@@ -17,16 +17,16 @@ public class EventModel
     public string Venue { get; set; } = null!;
 
     [Required]
-    public string StreetAddress { get; set; } = null!;
+    public string? StreetAddress { get; set; } 
 
     [Required]
-    public string PostalCode { get; set; } = null!;
+    public string? PostalCode { get; set; } 
 
     [Required]
     public string City { get; set; } = null!;
 
     [Required]
-    public string Country { get; set; } = null!;
+    public string? Country { get; set; } 
 
     [Required]
     public DateTime Start { get; set; }

@@ -15,17 +15,16 @@ public class EventRegForm
     [Required(ErrorMessage = "Field is required.")]
     public string Venue { get; set; } = null!;
 
-    [Required(ErrorMessage = "Field is required.")]
-    public string StreetAddress { get; set; } = null!;
+    
+    public string? StreetAddress { get; set; }
 
-    [Required(ErrorMessage = "Field is required.")]
-    public string PostalCode { get; set; } = null!;
+    public string? PostalCode { get; set; }
 
     [Required(ErrorMessage = "Field is required.")]
     public string City { get; set; } = null!;
 
-    [Required(ErrorMessage = "Field is required.")]
-    public string Country { get; set; } = null!;
+
+    public string? Country { get; set; }
 
     [Required(ErrorMessage = "Field is required.")]
     public DateTime Start { get; set; }

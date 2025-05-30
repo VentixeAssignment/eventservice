@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddGrpc();
 
@@ -18,6 +20,12 @@ builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.MapOpenApi();
 app.UseHttpsRedirection();
