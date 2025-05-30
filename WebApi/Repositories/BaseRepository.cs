@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Identity.Client;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using WebApi.Data;
-using WebApi.Entities;
 using WebApi.Models;
 
 namespace WebApi.Repositories;
@@ -16,7 +11,6 @@ public class BaseRepository<TEntity, TModel>
 {
     protected readonly DataContext _context;
     protected readonly DbSet<TEntity> _table;
-    private IDbContextTransaction _transaction = null!;
     protected readonly ILogger<BaseRepository<TEntity, TModel>> _logger;
 
     public BaseRepository(DataContext context, ILogger<BaseRepository<TEntity, TModel>> logger)
@@ -29,24 +23,36 @@ public class BaseRepository<TEntity, TModel>
 
     #region CRUD
 
-    public virtual async Task<Result<TEntity>> CreateAsync(TModel model)
+    public virtual async Task<Result<TEntity>> CreateAsync(TEntity entity)
     {
-        if (model == null)
+        if (entity == null)
             return new Result<TEntity> { Success = false, ErrorMessage = "Invalid data." };
 
         try
         {
-            var result = await _context.AddAsync(model);
+            var result = await _context.AddAsync(entity);
 
             return result != null
-                ? new Result<TEntity> { Success = true, StatusCode = 201 }
+                ? new Result<TEntity> { Success = true, StatusCode = 201, Data = result.Entity }
                 : new Result<TEntity> { Success = false, StatusCode = 500, ErrorMessage = "Failed to create event." };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message, "Failed to create entity of type {EntityType}", typeof(TEntity).Name);
-            return new Result<TEntity> { Success = false, StatusCode = 500, ErrorMessage = "Something went wrong creating entity." };
+            return new Result<TEntity> { Success = false, StatusCode = 500, ErrorMessage = $"Something went wrong creating entity. ##### {ex}" };
         }
+    }
+
+    public async Task<Result<TEntity>> ExistsAsync(Expression<Func<TEntity, bool>> expression)
+    {
+        if (expression == null)
+            return new Result<TEntity> { Success = false, StatusCode = 400, ErrorMessage = "Invalid expression input." };
+
+        var exists = await _table.FirstOrDefaultAsync(expression);
+
+        return exists != null
+            ? new Result<TEntity> { Success = true, StatusCode = 200 }
+            : new Result<TEntity> { Success = false, StatusCode = 404, ErrorMessage = $"No entity found matching {expression}." };
     }
 
     public async Task<Result<TEntity>> GetAllAsync()
@@ -111,85 +117,5 @@ public class BaseRepository<TEntity, TModel>
     }
 
     #endregion
-
-
-
-    #region Transactions
-
-    public async Task<Result<TEntity>> BeginTransactionAsync()
-    {
-        if (_transaction != null)
-            return new Result<TEntity> { Success = false, StatusCode = 400, ErrorMessage = "Failed to begin transaction because a transaction is already started." };
     
-        try
-        {
-            _transaction = await _context.Database.BeginTransactionAsync();
-            return new Result<TEntity> { Success = true, StatusCode = 200 };
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message, "\nFailed to start new transaction for entity of type {EntityType}", typeof(TEntity).Name);
-            return new Result<TEntity> { Success = false, StatusCode = 500, ErrorMessage = $"Something went wrong when starting transation." };
-        }
-    }
-
-    public async Task<Result<TEntity>> CommitTransactionAsync()
-    {
-        if (_transaction == null)
-            return new Result<TEntity> { Success = false, StatusCode = 400, ErrorMessage = "Another transaction is already in use." };
-
-        try
-        {
-            await _transaction.CommitAsync();
-            await _transaction.DisposeAsync();
-            _transaction = null!;
-
-            return new Result<TEntity> { Success = true, StatusCode = 200 };
-        }
-        catch (Exception ex)
-        {
-            await _transaction.RollbackAsync();
-            _logger.LogError(ex.Message, "Failed to commit transaction for entity of type {EntityType}", typeof(TEntity).Name);
-            return new Result<TEntity> { Success = false, StatusCode = 500, ErrorMessage = $"Something went wrong when committing transation." };
-        }
-    }
-
-    public async Task<Result<TEntity>> RollbackTransactionAsync()
-    {
-        if (_transaction == null)
-            return new Result<TEntity> { Success = false, StatusCode = 400, ErrorMessage = "There is no transaction to roll back." };
-
-        try
-        {
-            await _transaction.RollbackAsync();
-            await _transaction.DisposeAsync();
-            _transaction = null!;
-
-            return new Result<TEntity> { Success = true, StatusCode = 200 };
-        }
-        catch (Exception ex)
-        {
-            _transaction = null!;
-            _logger.LogError(ex.Message, "Failed to roll back transaction for entity of type {EntityType}", typeof(TEntity).Name);
-            return new Result<TEntity> { Success = false, StatusCode = 500, ErrorMessage = "Failed to rollback transaction." };
-        }
-    }
-
-    public async Task<Result<TEntity>> SaveChangesAsync()
-    {
-        try
-        {
-            await _context.SaveChangesAsync();
-
-            return new Result<TEntity> { Success = true, StatusCode = 200 };
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex.Message, "Failed to save changes for entity of type {EntityType}", typeof(TEntity).Name);
-            return new Result<TEntity> { Success = false, StatusCode = 500, ErrorMessage = "Failed to save changes." };
-        }
-    }
-
-    #endregion
-
 }

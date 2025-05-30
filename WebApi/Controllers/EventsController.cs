@@ -5,14 +5,14 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/events")]
     [ApiController]
     public class EventsController(IEventService eventService) : ControllerBase
     {
         private readonly IEventService _eventService = eventService;
 
         [HttpPost]
-        [Route("/create")]
+        [Route("create")]
         public async Task<IActionResult> CreateEventAsync(EventRegForm form)
         {
             if (!ModelState.IsValid)
@@ -27,7 +27,7 @@ namespace WebApi.Controllers
                 return BadRequest(new { result.ErrorMessage });
 
             return result.Success
-                ? Created(string.Empty, new { result.ErrorMessage })
+                ? Created(string.Empty, new { result.Data })
                 : StatusCode(result.StatusCode, new { result.ErrorMessage });
         }
     }

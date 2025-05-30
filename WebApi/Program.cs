@@ -18,6 +18,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<EventRepository>();
 builder.Services.AddScoped<CategoryRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ImageService>();
 
 var app = builder.Build();
 

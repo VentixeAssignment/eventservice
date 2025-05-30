@@ -5,6 +5,8 @@ namespace WebApi.Dto;
 
 public class EventRegForm
 {
+    //[Required(ErrorMessage = "Field is required.")]
+    public IFormFile? EventImage { get; set; }
 
     [Required(ErrorMessage = "Field is required.")]
     public string EventName { get; set; } = null!;
@@ -42,7 +44,7 @@ public class EventRegForm
     public int TotalSeats { get; set; }
 
     [Required(ErrorMessage = "Field is required.")]
-    public IEnumerable<CategoryModel> Categories { get; set; } = [];
+    public List<CategoryModel> Categories { get; set; } = [];
 }
 
 

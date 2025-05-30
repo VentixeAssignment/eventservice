@@ -1,16 +1,19 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using System.Transactions;
+using WebApi.Data;
 using WebApi.Models;
 using WebApi.Protos;
 using WebApi.Repositories;
 
 namespace WebApi.Services;
 
-public class EventServiceGrpc(EventRepository repository, ILogger<EventInformationReply> logger, ILogger<SeatsReply> loggerSeats) : BookingHandler.BookingHandlerBase
+public class EventServiceGrpc(EventRepository repository, ILogger<EventInformationReply> logger, ILogger<SeatsReply> loggerSeats, DataContext context) : BookingHandler.BookingHandlerBase
 {
     private readonly EventRepository _repository = repository;
-    private readonly ILogger<EventInformationReply> _logger = logger;
+    private readonly DataContext _context = context;
 
+    private readonly ILogger<EventInformationReply> _logger = logger;
     private readonly ILogger<SeatsReply> _loggerSeats = loggerSeats;
 
     public override async Task<EventInformationReply> GetEventInformation(EventInformationRequest request, ServerCallContext context)
@@ -61,9 +64,8 @@ public class EventServiceGrpc(EventRepository repository, ILogger<EventInformati
 
     public override async Task<SeatsReply> UpdateSeatsLeft(SeatsRequest request, ServerCallContext context)
     {
-        if(request == null)
+        if (request == null)
         {
-            _loggerSeats.LogWarning("SeatsRequest was called with null Request.");
             return new SeatsReply
             {
                 Success = false,
@@ -71,46 +73,41 @@ public class EventServiceGrpc(EventRepository repository, ILogger<EventInformati
             };
         }
 
+        var entity = await _repository.GetOneAsync(x => x.Id == request.Id);
+        if (!entity.Success || entity.Data == null)
+        {
+            return new SeatsReply
+            {
+                Success = false,
+                Message = $"No entity found with id {request.Id}. ##### {entity.ErrorMessage}"
+            };
+        }
+
+        if (request.SeatsOrdered > entity.Data.SeatsLeft)
+        {
+            return new SeatsReply
+            {
+                Success = false,
+                Message = $"Seats ordered exceeds available seats for entity with id {request.Id}"
+            };
+        }
+
+        using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-
-            var entity = await _repository.GetOneAsync(x => x.Id == request.Id);
-            if (!entity.Success || entity.Data == null)
-            {
-                _loggerSeats.LogWarning($"Failed to get entity with id {request.Id}");
-                return new SeatsReply
-                {
-                    Success = false,
-                    Message = $"No entity found with id {request.Id}"
-                };
-            }
-            
-            if (request.SeatsOrdered > entity.Data.SeatsLeft)
-            {
-                _loggerSeats.LogWarning($"Seats ordered exceeds available seats for entity with id {request.Id}");
-                return new SeatsReply
-                {
-                    Success = false,
-                    Message = $"Seats ordered exceeds available seats for entity with id {request.Id}"
-                };
-            }
-
-            await _repository.BeginTransactionAsync();
-
             var updated = _repository.UpdateSeatsLeft(entity.Data, request.SeatsOrdered);
             if (!updated.Success)
             {
-                await _repository.RollbackTransactionAsync();
-                _loggerSeats.LogWarning($"Failed to update seats left for entity with id {request.Id}.");
+                await transaction.RollbackAsync();
                 return new SeatsReply
                 {
                     Success = false,
-                    Message = $"Failed to update seats left for entity with id {request.Id}."
+                    Message = $"Failed to update seats left for entity with id {request.Id}. ##### {updated.ErrorMessage}"
                 };
             }
 
-            await _repository.SaveChangesAsync();
-            await _repository.CommitTransactionAsync();
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
 
             return new SeatsReply
             {
@@ -120,12 +117,12 @@ public class EventServiceGrpc(EventRepository repository, ILogger<EventInformati
         }
         catch (Exception ex)
         {
-            await _repository.RollbackTransactionAsync();
-            _loggerSeats.LogError($"Failed to update seats left for entity with id {request.Id}\n{ex}\n{ex.Message}");
+            await transaction.RollbackAsync();
+            _loggerSeats.LogError($"Failed to update seats left for entity with id {request.Id}. ##### {ex}");
             return new SeatsReply
             {
                 Success = false,
-                Message = $"Something failed updating seats on entity with id {request.Id}"
+                Message = $"Something failed updating seats on entity with id {request.Id}. ##### {ex}"
             };
         }
     }

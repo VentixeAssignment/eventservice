@@ -1,6 +1,7 @@
 ﻿using WebApi.Dto;
 using WebApi.Entities;
 using WebApi.Models;
+using static Grpc.Core.Metadata;
 
 namespace WebApi.Factories;
 
@@ -30,6 +31,7 @@ public static class EventFactory
         return new EventModel
         {
             Id = entity.Id,
+            EventImageUrl = entity.EventImageUrl,
             EventName = entity.EventName,
             Description = entity.Description,
             Venue = entity.Venue,
@@ -46,7 +48,7 @@ public static class EventFactory
             Categories = entity.EventsCategories.Select(x => new CategoryModel
             {
                 Id = x.CategoryId,
-                CategoryName = x.Category.CategoryName
+                //CategoryName = x.Category.CategoryName ?? ""
             }).ToList()
         };
     }
@@ -56,6 +58,7 @@ public static class EventFactory
         return new EventEntity
         {
             Id = model.Id,
+            EventImageUrl = model.EventImageUrl,
             EventName = model.EventName,
             Description = model.Description,
             Venue = model.Venue,

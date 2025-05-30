@@ -27,4 +27,8 @@
 		<Protobuf Include="Protos\BookingHandler.proto" GrpcService="Server" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="wwwroot\Images\" />
+	</ItemGroup>
+
 </Project>

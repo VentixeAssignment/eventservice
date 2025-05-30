@@ -8,6 +8,9 @@ public class EventModel
     public string Id { get; set; } = null!;
 
     [Required]
+    public string EventImageUrl { get; set; } = null!;
+
+    [Required]
     public string EventName { get; set; } = null!;
 
     [Required]
@@ -16,16 +19,13 @@ public class EventModel
     [Required]
     public string Venue { get; set; } = null!;
 
-    [Required]
     public string? StreetAddress { get; set; } 
 
-    [Required]
     public string? PostalCode { get; set; } 
 
     [Required]
     public string City { get; set; } = null!;
 
-    [Required]
     public string? Country { get; set; } 
 
     [Required]
@@ -47,5 +47,5 @@ public class EventModel
     public int SeatsLeft { get; set; }
 
 
-    public IEnumerable<CategoryModel> Categories { get; set; } = [];
+    public List<CategoryModel> Categories { get; set; } = [];
 }

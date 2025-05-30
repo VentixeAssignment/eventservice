@@ -7,9 +7,10 @@ using WebApi.Repositories;
 
 namespace WebApi.Services;
 
-public class EventService(EventRepository repository, ILogger<EventModel> logger, DataContext context) : IEventService
+public class EventService(EventRepository repository, ILogger<EventModel> logger, DataContext context, ImageService imageService) : IEventService
 {
     private readonly EventRepository _repository = repository;
+    private readonly ImageService _imageService = imageService;
     private readonly ILogger<EventModel> _logger = logger;
 
     private readonly DataContext _context = context;
@@ -19,19 +20,34 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
     {
         if (dto == null)
             return new Result<EventModel> { Success = false, StatusCode = 400, ErrorMessage = "Required fields can not be empty." };
-        
+
+        var imageUrl = "";
+
+        if (dto.EventImage != null)
+            imageUrl = _imageService.CreateImageUrl(dto.EventImage);
+
+        var entity = EventFactory.EntityFromDto(dto);
+        entity.EventImageUrl = imageUrl;
+
+        entity.EventsCategories = dto.Categories.Select(x => new EventsCategoriesEntity
+        {
+            EventId = entity.Id,
+            CategoryId = x.Id
+        }).ToList();
+
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
 
-            var newEntityResult = await _repository.CreateAsync(dto);
+            var newEntityResult = await _repository.CreateAsync(entity);
 
             if (!newEntityResult.Success || newEntityResult.Data == null)
                 return new Result<EventModel> { Success = false, StatusCode = newEntityResult.StatusCode, ErrorMessage = newEntityResult.ErrorMessage };
-            
+
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+
 
             var newModel = EventFactory.ModelFromEntity(newEntityResult.Data);
 
@@ -53,7 +69,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
 
         if (!result.Success || result.DataList == null)
             return new Result<EventModel> { Success = false, StatusCode = result.StatusCode, ErrorMessage = result.ErrorMessage };
-        
+
         var categories = result.DataList.Select(x => EventFactory.ModelFromEntity(x)).ToList();
 
         return categories.Any()
@@ -70,7 +86,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
 
         if (!result.Success || result.Data == null)
             return new Result<EventModel> { Success = false, StatusCode = result.StatusCode, ErrorMessage = result.ErrorMessage };
-        
+
 
         var category = EventFactory.ModelFromEntity(result.Data);
 
@@ -94,7 +110,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
 
             if (!result.Success)
                 return new Result<EventModel> { Success = false, StatusCode = result.StatusCode, ErrorMessage = result.ErrorMessage };
-            
+
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
@@ -116,7 +132,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
     {
         if (seats == 0 || string.IsNullOrEmpty(eventId))
             return new Result<EventModel> { Success = false, StatusCode = 400, ErrorMessage = "Invalid data. Either eventId or seats are missing." };
-        
+
 
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
@@ -125,12 +141,12 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
 
             if (entity == null || entity.Data == null)
                 return new Result<EventModel> { Success = false, StatusCode = 404, ErrorMessage = $"No entity found with id {eventId}" };
-       
+
             var result = _repository.UpdateSeatsLeft(entity.Data, seats);
 
             if (!result.Success)
                 return new Result<EventModel> { Success = false, StatusCode = result.StatusCode, ErrorMessage = result.ErrorMessage };
-            
+
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
@@ -151,7 +167,7 @@ public class EventService(EventRepository repository, ILogger<EventModel> logger
     {
         if (id == null)
             return new Result<EventModel> { Success = false, StatusCode = 400, ErrorMessage = "Id can not be null or empty." };
-        
+
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {

@@ -59,6 +59,10 @@ namespace WebApi.Migrations
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("EventImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EventName")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
