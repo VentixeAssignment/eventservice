@@ -53,10 +53,10 @@ public class EventServiceGrpc(EventRepository repository, ILogger<EventInformati
                 SeatsLeft = reply.Data.SeatsLeft ?? 0,
                 PricePerSeat = (double)reply.Data.PricePerSeat,
                 Venue = reply.Data.Venue ?? "",
-                StreetAddress = reply.Data.StreetAddress,
-                PostalCode = reply.Data.PostalCode,
-                City = reply.Data.City,
-                Country = reply.Data.Country
+                StreetAddress = reply.Data.StreetAddress ?? "",
+                PostalCode = reply.Data.PostalCode ?? "",
+                City = reply.Data.City ?? "",
+                Country = reply.Data.Country ?? ""
             }
         };
     }
