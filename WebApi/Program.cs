@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddGrpc();
 
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlServer(builder.Configuration["ConnectionStrings:LocalDb"]));
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:VentixeDb"]));
 
 builder.Services.AddScoped<EventRepository>();
 builder.Services.AddScoped<CategoryRepository>();
