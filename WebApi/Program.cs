@@ -4,9 +4,10 @@ using WebApi.Repositories;
 using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+var allowedOrigins = builder.Configuration["AllowedOrigins"];
+var originArray = allowedOrigins?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-if (allowedOrigins == null || allowedOrigins.Length == 0)
+if (originArray == null || originArray.Length == 0)
 {
     throw new Exception($"Appsettings not loaded correctly. {allowedOrigins}");
 }
@@ -15,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(allowedOrigins)
+        policy.WithOrigins(originArray)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
