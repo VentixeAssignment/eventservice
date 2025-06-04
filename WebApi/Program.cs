@@ -6,6 +6,13 @@ using WebApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
+if (allowedOrigins == null || allowedOrigins.Length == 0)
+{
+    throw new InvalidOperationException("AllowedOrigins is not configured properly.");
+}
+
+Console.WriteLine("AllowedOrigins: " + string.Join(", ", allowedOrigins ?? []));
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
