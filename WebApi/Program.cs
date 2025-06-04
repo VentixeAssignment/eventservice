@@ -11,7 +11,7 @@ if (allowedOrigins == null || allowedOrigins.Length == 0)
     throw new InvalidOperationException("AllowedOrigins is not configured properly.");
 }
 
-Console.WriteLine("AllowedOrigins: " + string.Join(", ", allowedOrigins ?? []));
+Console.WriteLine("AllowedOrigins: " + string.Join(", ", allowedOrigins));
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(allowedOrigins!)
+        policy.WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
