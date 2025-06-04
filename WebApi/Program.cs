@@ -8,17 +8,8 @@ var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<stri
 
 if (allowedOrigins == null || allowedOrigins.Length == 0)
 {
-    throw new InvalidOperationException("AllowedOrigins is not configured properly.");
+    throw new Exception($"Appsettings not loaded correctly. {allowedOrigins}");
 }
-
-Console.WriteLine("AllowedOrigins: " + string.Join(", ", allowedOrigins));
-
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddGrpc();
 
 builder.Services.AddCors(options =>
 {
@@ -29,6 +20,13 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddGrpc();
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration["ConnectionStrings:LocalDb"]));
