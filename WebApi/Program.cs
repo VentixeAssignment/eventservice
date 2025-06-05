@@ -7,7 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = builder.Configuration["AllowedOrigins"];
 var originArray = allowedOrigins?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-Console.WriteLine($"Allowed Origins: {originArray}");
+foreach (var origin in originArray)
+{
+    Console.WriteLine($"Allowed Origins: {origin}");
+}
 
 if (originArray == null || originArray.Length == 0)
 {
@@ -43,6 +46,8 @@ builder.Services.AddScoped<ImageService>();
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseCors();
 
 if (app.Environment.IsDevelopment())
@@ -53,8 +58,6 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.MapOpenApi();
 
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 app.MapGrpcService<EventServiceGrpc>();
