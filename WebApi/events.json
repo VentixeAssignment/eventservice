@@ -10,8 +10,8 @@
     "currency": "USD",
     "totalSeats": 115,
     "categories": [
-      "Outdoor & Adventure"
-    ],
+      { "id": "96153886-9dc5-41b9-a34d-54ec678a38f7" }
+    ],            
     "description": "Upplev det ultimata äventyret på Adventure Gear Show! Här samlas ledande outdoor-varumärken för att visa upp den senaste utrustningen för vandring, camping, klättring och mycket mer. Prova produkter på plats, delta i expertledda workshops, och få exklusiva rabatter. Ett måste för naturälskare och friluftsentusiaster!"
   },
   {
@@ -25,7 +25,7 @@
     "currency": "USD",
     "totalSeats": 120,
     "categories": [
-      "Food & Culinary"
+      { "id": "bec20137-051e-403e-b25d-69640cd4bcea" }
     ],
     "description": "Följ med på en kulinarisk resa där smak, doft och upplevelser står i centrum. Culinary Delights Festival bjuder på läckra maträtter från hela världen, live-kockuppvisningar, matmarknader och workshops. Perfekt för matälskare som vill utforska nya kök och gastronomiska trender."
   },
@@ -40,7 +40,7 @@
     "currency": "USD",
     "totalSeats": 55,
     "categories": [
-      "Music"
+      { "id": "b0733799-c2a3-4a70-9c14-b307094a3cb7" }
     ],
     "description": "Echo Beats Festival samlar stans hetaste DJs och livemusik för en natt du sent kommer glömma. Dansa under stjärnorna till rytmerna av elektronisk musik, träffa andra musikälskare, och låt pulsen ta över i en magisk atmosfär fylld av ljus, ljud och energi."
   },
@@ -55,7 +55,7 @@
     "currency": "USD",
     "totalSeats": 0,
     "categories": [
-      "Fashion"
+      { "id": "05351be4-5f29-4e5e-a0d7-5a871433e8fc" }
     ],
     "description": "Välkommen till framtidens mode på Runway Revolution 2029 – där banbrytande designers presenterar nästa generations stilar och trender. Se exklusiva visningar, träffa branschfolk, och upplev hur kreativitet, hållbarhet och innovation formar morgondagens modevärld."
   },
@@ -70,7 +70,7 @@
     "currency": "USD",
     "totalSeats": 130,
     "categories": [
-      "Art & Design"
+      { "id": "e6a63fd1-9f79-4248-8bee-15834995d57d" }
     ],
     "description": "Utforska konst i alla dess former på Artistry Unveiled Expo – en mötesplats för konstnärer, designers och kreativa själar. Se utställningar av samtidskonst, delta i inspirerande samtal, och upptäck verk som tänjer på gränserna för uttryck och estetik."
   },
@@ -85,7 +85,7 @@
     "currency": "USD",
     "totalSeats": 85,
     "categories": [
-      "Technology"
+      { "id": "959c1a12-41aa-490b-9756-fcdad7e25095" }
     ],
     "description": "Tech Future Expo tar dig in i framtiden med det senaste inom teknik, innovation och digital utveckling. Upptäck banbrytande produkter, prova ny teknik, och lyssna till inspirerande talare från teknikens framkant. Ett event för nyfikna hjärnor och framtidens tänkare."
   }

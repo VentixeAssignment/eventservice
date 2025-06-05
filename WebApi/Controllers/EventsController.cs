@@ -49,7 +49,7 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<IActionResult> CreateEventAsync(EventRegForm form)
+        public async Task<IActionResult> CreateEventAsync([FromBody] EventRegForm form)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
