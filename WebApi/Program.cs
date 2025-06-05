@@ -46,6 +46,7 @@ builder.Services.AddScoped<ImageService>();
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseRouting();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
