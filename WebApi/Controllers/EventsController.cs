@@ -17,6 +17,8 @@ namespace WebApi.Controllers
         [Route("")]
         public async Task<IActionResult> GetEventsAsync()
         {
+            Console.WriteLine("Method to get events initiated...");
+
             var events = await _eventService.GetAllAsync();
             if (events == null || events.DataList == null)
                 return BadRequest("No events returned.");
