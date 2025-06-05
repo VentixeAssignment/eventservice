@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = builder.Configuration["AllowedOrigins"];
 var originArray = allowedOrigins?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
+Console.WriteLine($"Allowed Origins: {originArray}");
+
 if (originArray == null || originArray.Length == 0)
 {
     throw new Exception($"Appsettings not loaded correctly. {allowedOrigins}");
@@ -40,6 +42,9 @@ builder.Services.AddScoped<ImageService>();
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+app.UseCors();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -47,12 +52,11 @@ if (app.Environment.IsDevelopment())
 }
 app.UseStaticFiles();
 app.MapOpenApi();
-app.UseHttpsRedirection();
-app.UseCors();
-
-app.MapGrpcService<EventServiceGrpc>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+app.MapGrpcService<EventServiceGrpc>();
+
 app.Run();
