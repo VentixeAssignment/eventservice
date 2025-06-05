@@ -4,8 +4,14 @@ using WebApi.Repositories;
 using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddConsole();
+
 var allowedOrigins = builder.Configuration["AllowedOrigins"];
 var originArray = allowedOrigins?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+
+var logger = LoggerFactory.Create(logging => logging.AddConsole()).CreateLogger("Startup");
+logger.LogInformation($"Loaded AllowedOrigins from config: {allowedOrigins}");
 
 foreach (var origin in originArray)
 {
