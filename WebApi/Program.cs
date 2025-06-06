@@ -40,6 +40,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddGrpc();
 
 builder.Services.AddDbContext<DataContext>(options =>
