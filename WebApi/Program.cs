@@ -71,7 +71,7 @@ app.UseStaticFiles();
 app.MapOpenApi();
 
 
-app.MapControllers();
 app.MapGrpcService<EventServiceGrpc>();
+app.MapControllers();
 
 app.Run();
