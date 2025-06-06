@@ -6,34 +6,34 @@ using WebApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddConsole();
 
-//var allowedOrigins = builder.Configuration["AllowedOrigins"];
-//var originArray = allowedOrigins?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+var allowedOrigins = builder.Configuration["AllowedOrigins"];
+var originArray = allowedOrigins?.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
 
-//var logger = LoggerFactory.Create(logging => logging.AddConsole()).CreateLogger("Startup");
-//logger.LogInformation($"Loaded AllowedOrigins from config: {allowedOrigins}");
+var logger = LoggerFactory.Create(logging => logging.AddConsole()).CreateLogger("Startup");
+logger.LogInformation($"Loaded AllowedOrigins from config: {allowedOrigins}");
 
-//foreach (var origin in originArray)
-//{
-//    Console.WriteLine($"Allowed Origins: {origin}");
-//}
+foreach (var origin in originArray)
+{
+    Console.WriteLine($"Allowed Origins: {origin}");
+}
 
-//if (originArray == null || originArray.Length == 0)
-//{
-//    throw new Exception($"Appsettings not loaded correctly. {allowedOrigins}");
-//}
+if (originArray == null || originArray.Length == 0)
+{
+    throw new Exception($"Appsettings not loaded correctly. {allowedOrigins}");
+}
 
 builder.Services.AddCors();
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddDefaultPolicy(policy =>
-//    {
-//        policy.WithOrigins(originArray)
-//            .AllowAnyHeader()
-//            .AllowAnyMethod();
-//    });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(originArray)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
