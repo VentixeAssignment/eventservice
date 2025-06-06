@@ -55,7 +55,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+//app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
